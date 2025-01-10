@@ -4,27 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Website Preview Tool</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    .message {
+      margin-top: 10px;
+      color: green;
+    }
+    .copy-url {
+      display: none;
+      margin-top: 20px;
+    }
+    #previewLink {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <h1>Website Preview Tool</h1>
-  <div class="container">
-    <h2>Upload Your Website Files</h2>
-    <input type="file" id="fileUpload" multiple accept=".html, .css, .js">
-    <button id="uploadBtn">Upload and Preview</button>
-    
-    <h2>Drag and Drop Your Files</h2>
-    <div id="dropArea">
-      Drag and drop your files here, or click the upload button above.
-    </div>
-
-    <h2>Or Paste Your Code</h2>
-    <textarea id="codeInput" placeholder="Paste your HTML, CSS, or JS here..."></textarea>
-    <button id="runCodeBtn">Run Code</button>
-
-    <h2>Preview</h2>
-    <iframe id="previewFrame"></iframe>
+  <p>Upload your files to see a preview of your website.</p>
+  
+  <input type="file" id="fileInput" multiple />
+  <button id="uploadButton">Upload</button>
+  
+  <div id="message" class="message"></div>
+  
+  <div class="copy-url">
+    <p>Your preview link is ready!</p>
+    <input type="text" id="generatedURL" readonly />
+    <button id="copyButton">Copy URL</button>
   </div>
-  <script src="script.js"></script>
+
+  <script src="app.js"></script>
 </body>
 </html>
