@@ -1,65 +1,73 @@
-const fileInput = document.getElementById("fileInput");
-const uploadButton = document.getElementById("uploadButton");
-const messageDiv = document.getElementById("message");
-const copyUrlDiv = document.querySelector(".copy-url");
-const generatedURL = document.getElementById("generatedURL");
-const copyButton = document.getElementById("copyButton");
+// Handle file selection and preview generation
+document.getElementById("uploadForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent default form submission
 
-let fileMap = new Map(); // To store uploaded files
+    const fileInput = document.getElementById("fileInput");
+    const files = fileInput.files;
 
-// Handle file selection
-fileInput.addEventListener("change", () => {
-  fileMap.clear();
-  const files = fileInput.files;
-
-  for (const file of files) {
-    fileMap.set(file.name, file);
-  }
-
-  messageDiv.textContent = "Files selected successfully!";
-  messageDiv.style.color = "blue";
-});
-
-// Handle file upload
-uploadButton.addEventListener("click", () => {
-  if (fileMap.size === 0) {
-    messageDiv.textContent = "Please select files before uploading.";
-    messageDiv.style.color = "red";
-    return;
-  }
-
-  messageDiv.textContent = "Uploading files...";
-  messageDiv.style.color = "orange";
-
-  // Simulate file upload and preview generation
-  setTimeout(() => {
-    const htmlFile = Array.from(fileMap.values()).find(file => file.name.endsWith(".html"));
-    if (!htmlFile) {
-      messageDiv.textContent = "Error: Please upload at least one HTML file.";
-      messageDiv.style.color = "red";
-      return;
+    if (files.length === 0) {
+        alert("Please select at least one file to preview.");
+        return;
     }
 
-    // Create Blob URL for preview
+    // Check for HTML, CSS, and JS files in the selection
+    let htmlFile = null;
+    let cssFiles = [];
+    let jsFiles = [];
+
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].name.endsWith(".html")) {
+            htmlFile = files[i];
+        } else if (files[i].name.endsWith(".css")) {
+            cssFiles.push(files[i]);
+        } else if (files[i].name.endsWith(".js")) {
+            jsFiles.push(files[i]);
+        }
+    }
+
+    if (!htmlFile) {
+        alert("Please select at least one HTML file to preview.");
+        return;
+    }
+
+    // Read the HTML file and generate a preview
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const blob = new Blob([event.target.result], { type: "text/html" });
-      const previewURL = URL.createObjectURL(blob);
+    reader.onload = function (event) {
+        const htmlContent = event.target.result;
+        const iframe = document.createElement("iframe");
+        iframe.style.width = "100%";
+        iframe.style.height = "500px";
+        iframe.id = "previewIframe";
 
-      // Display success message and preview link
-      messageDiv.textContent = "Upload successful!";
-      messageDiv.style.color = "green";
+        // Inject the HTML content into the iframe
+        document.body.appendChild(iframe);
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(htmlContent);
+        iframeDoc.close();
 
-      copyUrlDiv.style.display = "block";
-      generatedURL.value = previewURL;
+        // Inject CSS files
+        cssFiles.forEach((cssFile) => {
+            const cssReader = new FileReader();
+            cssReader.onload = function (cssEvent) {
+                const style = iframeDoc.createElement("style");
+                style.innerHTML = cssEvent.target.result;
+                iframeDoc.head.appendChild(style);
+            };
+            cssReader.readAsText(cssFile);
+        });
+
+        // Inject JS files
+        jsFiles.forEach((jsFile) => {
+            const jsReader = new FileReader();
+            jsReader.onload = function (jsEvent) {
+                const script = iframeDoc.createElement("script");
+                script.innerHTML = jsEvent.target.result;
+                iframeDoc.body.appendChild(script);
+            };
+            jsReader.readAsText(jsFile);
+        });
     };
-    reader.readAsText(htmlFile);
-  }, 2000); // Simulate upload delay
-});
 
-// Handle copy URL
-copyButton.addEventListener("click", () => {
-  generatedURL.select();
-  document.execCommand("copy");
-  alert("URL copied to clipboard!");
+    reader.readAsText(htmlFile); // Start reading the HTML file
 });
