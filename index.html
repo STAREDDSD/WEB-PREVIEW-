@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Preview Tool</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Website Preview Tool</h1>
+  <div class="container">
+    <h2>Upload Your Website Files</h2>
+    <input type="file" id="fileUpload" multiple accept=".html, .css, .js">
+    <button id="uploadBtn">Upload and Preview</button>
+    
+    <h2>Drag and Drop Your Files</h2>
+    <div id="dropArea">
+      Drag and drop your files here, or click the upload button above.
+    </div>
+
+    <h2>Or Paste Your Code</h2>
+    <textarea id="codeInput" placeholder="Paste your HTML, CSS, or JS here..."></textarea>
+    <button id="runCodeBtn">Run Code</button>
+
+    <h2>Preview</h2>
+    <iframe id="previewFrame"></iframe>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
